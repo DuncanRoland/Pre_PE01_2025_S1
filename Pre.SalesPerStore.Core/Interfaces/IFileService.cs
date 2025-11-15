@@ -1,6 +1,6 @@
-using System;
+using Pre.SalesPerStore.Core.Entities;
 
-namespace Pre.SalesPerStore.Core.Services;
+namespace Pre.SalesPerStore.Core.Interfaces;
 
 public interface IFileService
 {

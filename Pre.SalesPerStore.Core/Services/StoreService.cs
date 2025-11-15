@@ -1,0 +1,82 @@
+﻿using Pre.SalesPerStore.Core.Entities;
+using Pre.SalesPerStore.Core.Interfaces;
+
+namespace Pre.SalesPerStore.Core.Services;
+
+public class StoreService : IStoreService
+{
+    public IEnumerable<string> GetStoresByProduct(string productName)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<string> GetAllCountries()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<string> GetAllStores()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<Product> GetProductsByPriceRange(decimal minPrice, decimal maxPrice)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<(string StoreName, decimal MeanPrice)> GetAverageProductPricePerStore()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<Product> GetSalesByStore(string storeName, int minNumberOfProducts)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool StoreHasProduct(string storeName, string productName)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<string> GetUniqueProducts()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Product GetProductWithHighestMargin(string storeName)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<Store> GetStoresByEstablishedYear(int year)
+    {
+        throw new NotImplementedException();
+    }
+
+    public decimal GetAverageProductPrice(string productName)
+    {
+        throw new NotImplementedException();
+    }
+
+    public decimal GetAverageProductMargin(string productName)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<Product> GetFiveMostExpensiveProducts(string storeName)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<string> GetAverageProductMarginPerCountryByProductName(string productName)
+    {
+        throw new NotImplementedException();
+    }
+
+    public int GetNumberOfStoresByCountry(string productName, string countryName)
+    {
+        throw new NotImplementedException();
+    }
+}
