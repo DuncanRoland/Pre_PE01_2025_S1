@@ -1,5 +1,4 @@
 ﻿using Pre.SalesPerStore.Core.Entities;
-using Pre.SalesPerStore.Core.Interfaces;
 
 namespace Pre.SalesPerStore.Core.Services;
 

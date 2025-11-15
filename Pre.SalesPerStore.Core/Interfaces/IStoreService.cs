@@ -13,7 +13,7 @@ public interface IStoreService
     // Haal alle unieke winkels op, gesorteerd van A naar Z.
     IEnumerable<string> GetAllStores();
 
-    // Haal alle producten tussen een bepaalde verkoopsprijs uit de lijst
+    // Haal alle producten tussen een bepaalde verkoopsprijs uit de lijst 
     IEnumerable<Product> GetProductsByPriceRange(decimal minPrice, decimal maxPrice);
 
     // Geef een lijst terug met de gemiddelde verkoopsprijs per store
