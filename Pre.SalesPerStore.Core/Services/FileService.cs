@@ -1,4 +1,6 @@
-﻿using Pre.SalesPerStore.Core.Entities;
+﻿using System.Globalization;
+using System.Text;
+using Pre.SalesPerStore.Core.Entities;
 using Pre.SalesPerStore.Core.Interfaces;
 
 namespace Pre.SalesPerStore.Core.Services;
@@ -7,35 +9,75 @@ public class FileService : IFileService
 {
     public List<Store> LoadStoresFromFile(string fileName)
     {
-        throw new NotImplementedException();
+        var storesByKey = new Dictionary<string, Store?>(StringComparer.OrdinalIgnoreCase);
+
+        var lines = ReadFile(fileName);
+
+        for (int i = 0; i < lines.Length; i++)
+        {
+            int lineNumber = i + 1;
+            var trimmed = lines[i].Trim();
+
+            if (lineNumber == 1 && trimmed.StartsWith("StoreName", StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            var parts = trimmed.Split(';');
+            if (parts.Length < 7)
+            {
+                Console.Error.WriteLine($"[LoadStoresFromFile] Malformed line {lineNumber}.");
+                continue;
+            }
+
+            try
+            {
+                var storeName = parts[0].Trim();
+                var storeCountry = parts[1].Trim();
+                DateTime establishedDate =
+                    DateTime.ParseExact(parts[2].Trim(), "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                var productName = parts[3].Trim();
+                int quantity = int.Parse(parts[4].Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture);
+                decimal sellPrice = decimal.Parse(parts[5].Trim(), NumberStyles.Number, CultureInfo.InvariantCulture);
+                decimal buyingPrice = decimal.Parse(parts[6].Trim(), NumberStyles.Number, CultureInfo.InvariantCulture);
+
+                var key = storeName + "|" + storeCountry + "|" + establishedDate.ToString("yyyy-MM-dd");
+                if (!storesByKey.TryGetValue(key, out var store))
+                {
+                    store = new Store(storeName, storeCountry, establishedDate);
+                    storesByKey[key] = store;
+                }
+
+                store?.Products.Add(new Product(productName, quantity, sellPrice, buyingPrice));
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"[LoadStoresFromFile] Skipping line {lineNumber}: {ex.Message}");
+            }
+        }
+
+        return new List<Store>(storesByKey.Values!);
     }
 
-    public string ReadFile(string filePath)
+
+    public string[] ReadFile(string filePath, Encoding? encoding = null)
     {
-        string fileContent;
+        encoding ??= Encoding.UTF8;
+
+        if (!File.Exists(filePath))
+        {
+            Console.Error.WriteLine($"[ReadFileLines] File not found: {filePath}");
+            return [];
+        }
 
         try
         {
-            using StreamReader streamReader = new StreamReader(filePath);
-            fileContent = streamReader.ReadToEnd();
-        }
-        catch (FileNotFoundException ex)
-        {
-            return $"Error: The file was not found. {ex.Message}";
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return $"Error: You do not have permission to access this file. {ex.Message}";
-        }
-        catch (IOException ex)
-        {
-            return $"Error: The file {filePath} could not be read. {ex.Message}";
+            using var sr = new StreamReader(filePath, encoding);
+            var content = sr.ReadToEnd();
+            return content.Split(["\r\n", "\n"], StringSplitOptions.None);
         }
         catch (Exception ex)
         {
-            return $"An unexpected error occurred: {ex.Message}";
+            Console.Error.WriteLine($"[ReadFileLines] Read error: {ex.Message}");
+            return [];
         }
-
-        return fileContent;
     }
 }
