@@ -37,7 +37,7 @@ public class StoreService : IStoreService
 
     public IEnumerable<string> GetAllStores()
     {
-        throw new NotImplementedException();
+        return _stores.Select(store => store.StoreName).Distinct().OrderBy(store => store);
     }
 
     public IEnumerable<Product> GetProductsByPriceRange(decimal minPrice, decimal maxPrice)

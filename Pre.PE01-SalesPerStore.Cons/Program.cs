@@ -88,5 +88,15 @@ class Program
         {
             Console.WriteLine($"- {country}");
         }
+
+        // Test GetAllStores linq method
+        Console.WriteLine("========================================");
+        Console.WriteLine("test GetAllStores linq method");
+        var storesList = storeService.GetAllStores().ToList();
+        Console.WriteLine("\nAll unique stores:");
+        foreach (var store in storesList)
+        {
+            Console.WriteLine($"- {store}");
+        }
     }
 }
