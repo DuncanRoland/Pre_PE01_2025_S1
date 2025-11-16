@@ -5,9 +5,27 @@ namespace Pre.SalesPerStore.Core.Services;
 
 public class StoreService : IStoreService
 {
+    readonly List<Store> _stores;
+
+    public StoreService(IFileService fileService, string assetsFolderPath, string fileName = "stores_products.csv")
+    {
+        if (fileService == null) throw new ArgumentNullException(nameof(fileService));
+        if (string.IsNullOrWhiteSpace(assetsFolderPath))
+            throw new ArgumentException("Path empty", nameof(assetsFolderPath));
+
+        var filePath = Path.Combine(assetsFolderPath, fileName);
+        _stores = File.Exists(filePath)
+            ? fileService.LoadStoresFromFile(filePath)
+            : new List<Store>();
+    }
+
     public IEnumerable<string> GetStoresByProduct(string productName)
     {
-        throw new NotImplementedException();
+        return _stores
+            .Where(store => store.Products.Any(product =>
+                string.Equals(product.ProductName, productName, StringComparison.OrdinalIgnoreCase)))
+            .Select(store => store.StoreName)
+            .Distinct();
     }
 
     public IEnumerable<string> GetAllCountries()
