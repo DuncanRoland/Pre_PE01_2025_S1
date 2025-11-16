@@ -1,4 +1,5 @@
-﻿using Pre.SalesPerStore.Core.Interfaces;
+﻿using Pre.SalesPerStore.Core.Entities;
+using Pre.SalesPerStore.Core.Interfaces;
 using Pre.SalesPerStore.Core.Services;
 
 namespace Pre.PE01_SalesPerStore.Cons;
@@ -7,26 +8,26 @@ class Program
 {
     static void Main(string[] args)
     {
-        string folderPath = Path.Combine("G:", "My Drive", "howest", "Programming_Expert", "PE1",
-            "st-pe-store-start-DuncanRoland",
-            "Pre.PE01-SalesPerStore.Cons", "Assets");
-
-        if (!Directory.Exists(folderPath))
+        var assetsPath = Path.Combine(AppContext.BaseDirectory, "Assets");
+        if (!Directory.Exists(assetsPath))
         {
-            Console.Error.WriteLine($"Directory not found: `{folderPath}`");
+            Console.Error.WriteLine($"Assets directory not found: `{assetsPath}`");
             return;
         }
 
         IFileService fileService = new FileService();
-        //string filePath = Path.Combine(folderPath, "stores_products.csv");
+        var csvFiles = Directory.EnumerateFiles(assetsPath, "*.csv", SearchOption.TopDirectoryOnly).ToList();
+        if (csvFiles.Count == 0)
+        {
+            Console.WriteLine($"No CSV files found in `{assetsPath}`");
+            return;
+        }
 
-        var csvFiles = Directory.EnumerateFiles(folderPath, "*.csv", SearchOption.TopDirectoryOnly);
-
-        bool foundAny = false;
-
+        // Test LoadStoresFromFile
+        var allStores = new List<Store>();
+        Console.WriteLine("Parsing CSV files:");
         foreach (var file in csvFiles)
         {
-            foundAny = true;
             Console.WriteLine($"\n=== {Path.GetFileName(file)} ===");
             try
             {
@@ -37,12 +38,15 @@ class Program
                     continue;
                 }
 
+                allStores.AddRange(stores);
+
                 foreach (var store in stores)
                 {
                     Console.WriteLine($"Store: {store.StoreName} | Country: {store.StoreCountry}");
                     foreach (var product in store.Products)
                     {
-                        Console.WriteLine($"  - {product.ProductName}: qty={product.Quantity}, sell={product.SellPrice}, buy={product.BuyingPrice}");
+                        Console.WriteLine(
+                            $"  - {product.ProductName}: qty={product.Quantity}, sell={product.SellPrice}, buy={product.BuyingPrice}");
                     }
                 }
             }
@@ -52,9 +56,28 @@ class Program
             }
         }
 
-        if (!foundAny)
+        if (allStores.Count == 0)
         {
-            Console.WriteLine($"No CSV files found in `{folderPath}`");
+            Console.WriteLine("No stores loaded.");
+            return;
         }
+
+        // Linq
+        var storeService = new StoreService(fileService, assetsPath);
+        
+        Console.WriteLine("========================================");
+        Console.WriteLine("Test GetStoresByProduct linq method");
+        Console.WriteLine("\nEnter product name to search (default: Laptop): ");
+        var input = Console.ReadLine();
+        var productName = string.IsNullOrWhiteSpace(input) ? "Laptop" : input.Trim();
+        var matchingStores = storeService.GetStoresByProduct(productName).ToList();
+
+      
+        Console.WriteLine($"\nStores selling `{productName}`:");
+        if (matchingStores.Count == 0)
+            Console.WriteLine("  (none)");
+        else
+            foreach (var name in matchingStores)
+                Console.WriteLine($"- {name}");
     }
 }
