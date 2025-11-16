@@ -119,7 +119,10 @@ public class StoreService : IStoreService
 
     public IEnumerable<Product> GetFiveMostExpensiveProducts(string storeName)
     {
-        throw new NotImplementedException();
+        return _stores. Where(store => string.Equals(store.StoreName, storeName, StringComparison.OrdinalIgnoreCase))
+            .SelectMany(store => store.Products)
+            .OrderByDescending(product => product.SellPrice)
+            .Take(5);
     }
 
     public IEnumerable<string> GetAverageProductMarginPerCountryByProductName(string productName)

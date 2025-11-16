@@ -231,13 +231,25 @@ class Program
         var averageMargin = storeService.GetAverageProductMargin(productNameForAvgMargin);
         var roundedMargin = Math.Round(averageMargin, 2);
         Console.WriteLine($"\nAverage margin of `{productNameForAvgMargin}` across all stores: {roundedMargin:F2}");
+
+        // Test GetFiveMostExpensiveProducts linq method
+        Console.WriteLine("========================================");
+        Console.WriteLine("test GetFiveMostExpensiveProducts linq method");
+        Console.WriteLine("\nEnter store name to search (default: TechWorld): ");
+        var storeInput4 = Console.ReadLine();
+        var storeNameForExpensiveProducts = string.IsNullOrWhiteSpace(storeInput4) ? "TechWorld" : storeInput4.Trim();
+        var expensiveProducts = storeService.GetFiveMostExpensiveProducts(storeNameForExpensiveProducts).ToList();
+        Console.WriteLine($"\nFive most expensive products in `{storeNameForExpensiveProducts}`:");
         
-        
-        
-        
-        
-        
-        
-        
+        if (expensiveProducts.Count == 0)
+        {
+            Console.WriteLine("  (none)");
+        }
+        else
+        {
+            foreach (var product in expensiveProducts)
+                Console.WriteLine(
+                    $"- {product.ProductName}: sell={product.SellPrice}, buy={product.BuyingPrice}");
+        }
     }
 }
