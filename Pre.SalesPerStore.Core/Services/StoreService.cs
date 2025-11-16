@@ -63,7 +63,11 @@ public class StoreService : IStoreService
 
     public IEnumerable<Product> GetSalesByStore(string storeName, int minNumberOfProducts)
     {
-        throw new NotImplementedException();
+        return _stores 
+            .Where(store => string.Equals(store.StoreName, storeName, StringComparison.OrdinalIgnoreCase))
+            .SelectMany(store => store.Products)
+            .Where(product => product.Quantity < minNumberOfProducts)
+            .OrderBy(product => product.Quantity);
     }
 
     public bool StoreHasProduct(string storeName, string productName)

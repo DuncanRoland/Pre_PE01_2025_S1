@@ -126,5 +126,23 @@ class Program
         {
             Console.WriteLine($"- {storeName}: Average Price = {meanPrice}");
         }
+
+        // Test GetSalesByStore linq method
+        Console.WriteLine("========================================");
+        Console.WriteLine("test GetSalesByStore linq method");
+        Console.WriteLine("\nEnter store name to search (default: TechWorld): ");
+        var storeInput = Console.ReadLine();
+        var storeNameToSearch = string.IsNullOrWhiteSpace(storeInput) ? "TechWorld" : storeInput.Trim();
+        Console.WriteLine("Enter minimum number of products (default: 10): ");
+        var minProductsInput = Console.ReadLine();
+        int minNumberOfProducts = string.IsNullOrWhiteSpace(minProductsInput) ? 10 : int.Parse(minProductsInput);
+        var lowStockProducts = storeService.GetSalesByStore(storeNameToSearch, minNumberOfProducts).ToList();
+        Console.WriteLine($"\nProducts in `{storeNameToSearch}` with stock less than {minNumberOfProducts}:");
+        if (lowStockProducts.Count == 0)
+            Console.WriteLine("  (none)");
+        else
+            foreach (var product in lowStockProducts)
+                Console.WriteLine(
+                    $"- {product.ProductName}: qty={product.Quantity}, sell={product.SellPrice}, buy={product.BuyingPrice}");
     }
 }
