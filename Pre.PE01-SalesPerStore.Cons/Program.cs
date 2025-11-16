@@ -144,5 +144,19 @@ class Program
             foreach (var product in lowStockProducts)
                 Console.WriteLine(
                     $"- {product.ProductName}: qty={product.Quantity}, sell={product.SellPrice}, buy={product.BuyingPrice}");
+
+        // Test StoreHasProduct linq method
+        Console.WriteLine("========================================");
+        Console.WriteLine("test StoreHasProduct linq method");
+        Console.WriteLine("\nEnter store name to search (default: TechWorld): ");
+        var storeInput2 = Console.ReadLine();
+        var storeNameToCheck = string.IsNullOrWhiteSpace(storeInput2) ? "TechWorld" : storeInput2.Trim();
+        Console.WriteLine("Enter product name to search (default: Laptop): ");
+        var productInput2 = Console.ReadLine();
+        var productNameToCheck = string.IsNullOrWhiteSpace(productInput2) ? "Laptop" : productInput2.Trim();
+        var hasProduct = storeService.StoreHasProduct(storeNameToCheck, productNameToCheck);
+        Console.WriteLine(hasProduct
+            ? $"\nYes, `{storeNameToCheck}` sells `{productNameToCheck}`."
+            : $"\n{storeNameToCheck}` does not sell `{productNameToCheck}`.");
     }
 }

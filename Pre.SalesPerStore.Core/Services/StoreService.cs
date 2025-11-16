@@ -63,7 +63,7 @@ public class StoreService : IStoreService
 
     public IEnumerable<Product> GetSalesByStore(string storeName, int minNumberOfProducts)
     {
-        return _stores 
+        return _stores
             .Where(store => string.Equals(store.StoreName, storeName, StringComparison.OrdinalIgnoreCase))
             .SelectMany(store => store.Products)
             .Where(product => product.Quantity < minNumberOfProducts)
@@ -72,7 +72,10 @@ public class StoreService : IStoreService
 
     public bool StoreHasProduct(string storeName, string productName)
     {
-        throw new NotImplementedException();
+        return _stores.Any(store =>
+            string.Equals(store.StoreName, storeName, StringComparison.OrdinalIgnoreCase) &&
+            store.Products.Any(product =>
+                string.Equals(product.ProductName, productName, StringComparison.OrdinalIgnoreCase)));
     }
 
     public IEnumerable<string> GetUniqueProducts()
