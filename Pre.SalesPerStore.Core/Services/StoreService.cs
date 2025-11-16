@@ -101,7 +101,11 @@ public class StoreService : IStoreService
 
     public decimal GetAverageProductPrice(string productName)
     {
-        throw new NotImplementedException();
+        return _stores.SelectMany(store => store.Products)
+            .Where(product => string.Equals(product.ProductName, productName, StringComparison.OrdinalIgnoreCase))
+            .Select(product => product.SellPrice)
+            .DefaultIfEmpty(0m)
+            .Average();
     }
 
     public decimal GetAverageProductMargin(string productName)

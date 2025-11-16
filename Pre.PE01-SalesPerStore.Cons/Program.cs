@@ -191,13 +191,13 @@ class Program
         // Test GetStoresByEstablishedYear linq method
         Console.WriteLine("========================================");
         Console.WriteLine("test GetStoresByEstablishedYear linq method");
-        Console.WriteLine("\nEnter established year to search (default: 2013): ");
-       
+        Console.WriteLine("\nEnter established year to search (default: 1985): ");
+
         var yearInput = Console.ReadLine();
-        int establishedYear = string.IsNullOrWhiteSpace(yearInput) ? 2013 : int.Parse(yearInput);
+        int establishedYear = string.IsNullOrWhiteSpace(yearInput) ? 1985 : int.Parse(yearInput);
         var storesByYear = storeService.GetStoresByEstablishedYear(establishedYear).ToList();
         Console.WriteLine($"\nStores established before {establishedYear}:");
-        
+
         if (storesByYear.Count == 0)
         {
             Console.WriteLine("  (none)");
@@ -206,8 +206,24 @@ class Program
         {
             foreach (var store in storesByYear)
             {
-                Console.WriteLine($"- {store.StoreName}, {store.StoreCountry}: Established on {store.EstablishedDate:yyyy-MM-dd}");
+                Console.WriteLine(
+                    $"- {store.StoreName}, {store.StoreCountry}: Established on {store.EstablishedDate:yyyy-MM-dd}");
             }
         }
+
+        // Test GetAverageProductPrice linq method
+        Console.WriteLine("========================================");
+        Console.WriteLine("test GetAverageProductPrice linq method");
+        Console.WriteLine("\nEnter product name to search (default: Laptop): ");
+        var productInput3 = Console.ReadLine();
+        var productNameForAvgPrice = string.IsNullOrWhiteSpace(productInput3) ? "Laptop" : productInput3.Trim();
+       
+        var averagePrice = storeService.GetAverageProductPrice(productNameForAvgPrice);
+        var roundedAverage = Math.Round(averagePrice, 2);
+        Console.WriteLine($"\nAverage price of `{productNameForAvgPrice}` across all stores: {roundedAverage:F2}");
     }
+    
+    
+    
+    
 }
