@@ -127,7 +127,29 @@ public class StoreService : IStoreService
 
     public IEnumerable<string> GetAverageProductMarginPerCountryByProductName(string productName)
     {
-        throw new NotImplementedException();
+        return _stores. SelectMany(store => store.Products
+                .Where(product => string.Equals(product.ProductName, productName, StringComparison.OrdinalIgnoreCase))
+                .Select(product => new
+                {
+                    store.StoreCountry,
+                    Margin = product.SellPrice - product.BuyingPrice
+                }))
+            .GroupBy(item => item.StoreCountry)
+            .Select(grouping =>
+            {
+                var averageMargin = grouping
+                    .Select(item => item.Margin)
+                    .DefaultIfEmpty(0m)
+                    .Average();
+
+                return new
+                {
+                    Country = grouping.Key,
+                    AverageMargin = averageMargin
+                };
+            })
+            .OrderBy(item => item.AverageMargin)
+            .Select(item => $"Country: {item.Country} - Margin: {item.AverageMargin:F2}");
     }
 
     public int GetNumberOfStoresByCountry(string productName, string countryName)

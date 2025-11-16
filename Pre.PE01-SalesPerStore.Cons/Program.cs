@@ -240,7 +240,7 @@ class Program
         var storeNameForExpensiveProducts = string.IsNullOrWhiteSpace(storeInput4) ? "TechWorld" : storeInput4.Trim();
         var expensiveProducts = storeService.GetFiveMostExpensiveProducts(storeNameForExpensiveProducts).ToList();
         Console.WriteLine($"\nFive most expensive products in `{storeNameForExpensiveProducts}`:");
-        
+
         if (expensiveProducts.Count == 0)
         {
             Console.WriteLine("  (none)");
@@ -250,6 +250,27 @@ class Program
             foreach (var product in expensiveProducts)
                 Console.WriteLine(
                     $"- {product.ProductName}: sell={product.SellPrice}, buy={product.BuyingPrice}");
+        }
+
+        // Test GetAverageProductMarginPerCountryByProductName linq method
+        Console.WriteLine("========================================");
+        Console.WriteLine("test GetAverageProductMarginPerCountryByProductName linq method");
+        Console.WriteLine("\nEnter product name to search (default: Laptop): ");
+        var productInput5 = Console.ReadLine();
+        var productNameForMarginPerCountry = string.IsNullOrWhiteSpace(productInput5) ? "Laptop" : productInput5.Trim();
+        var marginPerCountry = storeService
+            .GetAverageProductMarginPerCountryByProductName(productNameForMarginPerCountry).ToList();
+        Console.WriteLine($"\nAverage product margin per country for `{productNameForMarginPerCountry}`:");
+        if (marginPerCountry.Count == 0)
+        {
+            Console.WriteLine("  (none)");
+        }
+        else
+        {
+            foreach (var entry in marginPerCountry)
+            {
+                Console.WriteLine($"- {entry}");
+            }
         }
     }
 }
