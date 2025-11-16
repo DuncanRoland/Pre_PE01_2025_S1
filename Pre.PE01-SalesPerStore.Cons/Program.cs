@@ -217,13 +217,27 @@ class Program
         Console.WriteLine("\nEnter product name to search (default: Laptop): ");
         var productInput3 = Console.ReadLine();
         var productNameForAvgPrice = string.IsNullOrWhiteSpace(productInput3) ? "Laptop" : productInput3.Trim();
-       
+
         var averagePrice = storeService.GetAverageProductPrice(productNameForAvgPrice);
         var roundedAverage = Math.Round(averagePrice, 2);
         Console.WriteLine($"\nAverage price of `{productNameForAvgPrice}` across all stores: {roundedAverage:F2}");
+
+        // Test GetAverageProductMargin linq method
+        Console.WriteLine("========================================");
+        Console.WriteLine("test GetAverageProductMargin linq method");
+        Console.WriteLine("\nEnter product name to search (default: Laptop): ");
+        var productInput4 = Console.ReadLine();
+        var productNameForAvgMargin = string.IsNullOrWhiteSpace(productInput4) ? "Laptop" : productInput4.Trim();
+        var averageMargin = storeService.GetAverageProductMargin(productNameForAvgMargin);
+        var roundedMargin = Math.Round(averageMargin, 2);
+        Console.WriteLine($"\nAverage margin of `{productNameForAvgMargin}` across all stores: {roundedMargin:F2}");
+        
+        
+        
+        
+        
+        
+        
+        
     }
-    
-    
-    
-    
 }
