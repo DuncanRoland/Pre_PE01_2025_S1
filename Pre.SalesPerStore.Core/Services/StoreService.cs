@@ -96,7 +96,7 @@ public class StoreService : IStoreService
 
     public IEnumerable<Store> GetStoresByEstablishedYear(int year)
     {
-        return _stores.Where(store => store.EstablishedDate.Year < year);
+        return _stores.Where(store => store.EstablishedDate.Year < year).OrderBy(store => store.EstablishedDate);
     }
 
     public decimal GetAverageProductPrice(string productName)
