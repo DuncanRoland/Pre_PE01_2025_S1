@@ -16,13 +16,13 @@ class Program
         }
 
         IFileService fileService = new FileService();
-        
+
         var logService = new LogService();
         if (fileService is FileService concrete)
         {
             concrete.PrintEventArgsOccurred += logService.Log;
         }
-        
+
         var csvFiles = Directory.EnumerateFiles(assetsPath, "*.csv", SearchOption.TopDirectoryOnly).ToList();
         if (csvFiles.Count == 0)
         {
@@ -131,7 +131,7 @@ class Program
         Console.WriteLine("\nAverage product prices per store:");
         foreach (var (storeName, meanPrice) in averagePrices)
         {
-            Console.WriteLine($"- {storeName}: Average Price = {meanPrice}");
+            Console.WriteLine($"- {storeName}: Average Price = {meanPrice:F2}");
         }
 
         // Test GetSalesByStore linq method
@@ -290,6 +290,7 @@ class Program
         var countryInput = Console.ReadLine();
         var countryNameForStoreCount = string.IsNullOrWhiteSpace(countryInput) ? "Belgium" : countryInput.Trim();
         var storeCount = storeService.GetNumberOfStoresByCountry(productNameForStoreCount, countryNameForStoreCount);
-        Console.WriteLine($"\nNumber of stores selling `{productNameForStoreCount}` in `{countryNameForStoreCount}`: {storeCount}");
+        Console.WriteLine(
+            $"\nNumber of stores selling `{productNameForStoreCount}` in `{countryNameForStoreCount}`: {storeCount}");
     }
 }
