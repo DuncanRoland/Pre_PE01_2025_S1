@@ -116,5 +116,15 @@ class Program
         {
             Console.WriteLine($"- {product.ProductName}: sell={product.SellPrice}, buy={product.BuyingPrice}");
         }
+
+        // Test GetAverageProductPricePerStore linq method
+        Console.WriteLine("========================================");
+        Console.WriteLine("test GetAverageProductPricePerStore linq method");
+        var averagePrices = storeService.GetAverageProductPricePerStore().ToList();
+        Console.WriteLine("\nAverage product prices per store:");
+        foreach (var (storeName, meanPrice) in averagePrices)
+        {
+            Console.WriteLine($"- {storeName}: Average Price = {meanPrice}");
+        }
     }
 }

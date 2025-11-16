@@ -48,7 +48,17 @@ public class StoreService : IStoreService
 
     public IEnumerable<(string StoreName, decimal MeanPrice)> GetAverageProductPricePerStore()
     {
-        throw new NotImplementedException();
+        return _stores
+            .GroupBy(store => store.StoreName)
+            .Select(grouping =>
+            {
+                var allSellPrices = grouping
+                    .SelectMany(store => store.Products)
+                    .Select(product => product.SellPrice);
+
+                var mean = allSellPrices.DefaultIfEmpty(0m).Average();
+                return (StoreName: grouping.Key, MeanPrice: mean);
+            });
     }
 
     public IEnumerable<Product> GetSalesByStore(string storeName, int minNumberOfProducts)
