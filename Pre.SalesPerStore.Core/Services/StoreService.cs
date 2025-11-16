@@ -30,7 +30,9 @@ public class StoreService : IStoreService
 
     public IEnumerable<string> GetAllCountries()
     {
-        throw new NotImplementedException();
+        return _stores
+            .Select(store => store.StoreCountry)
+            .Distinct();
     }
 
     public IEnumerable<string> GetAllStores()

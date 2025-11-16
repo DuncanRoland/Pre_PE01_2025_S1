@@ -64,7 +64,7 @@ class Program
 
         // Linq
         var storeService = new StoreService(fileService, assetsPath);
-        
+
         Console.WriteLine("========================================");
         Console.WriteLine("Test GetStoresByProduct linq method");
         Console.WriteLine("\nEnter product name to search (default: Laptop): ");
@@ -72,12 +72,21 @@ class Program
         var productName = string.IsNullOrWhiteSpace(input) ? "Laptop" : input.Trim();
         var matchingStores = storeService.GetStoresByProduct(productName).ToList();
 
-      
         Console.WriteLine($"\nStores selling `{productName}`:");
         if (matchingStores.Count == 0)
             Console.WriteLine("  (none)");
         else
             foreach (var name in matchingStores)
                 Console.WriteLine($"- {name}");
+
+        // Test GetAllCountries linq method
+        Console.WriteLine("========================================");
+        Console.WriteLine("test GetAllCountries linq method");
+        var countries = storeService.GetAllCountries().ToList();
+        Console.WriteLine("\nCountries with stores:");
+        foreach (var country in countries)
+        {
+            Console.WriteLine($"- {country}");
+        }
     }
 }
