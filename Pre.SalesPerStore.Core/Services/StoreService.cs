@@ -42,7 +42,8 @@ public class StoreService : IStoreService
 
     public IEnumerable<Product> GetProductsByPriceRange(decimal minPrice, decimal maxPrice)
     {
-        throw new NotImplementedException();
+        return _stores.SelectMany(store => store.Products)
+            .Where(product => product.SellPrice >= minPrice && product.SellPrice <= maxPrice);
     }
 
     public IEnumerable<(string StoreName, decimal MeanPrice)> GetAverageProductPricePerStore()

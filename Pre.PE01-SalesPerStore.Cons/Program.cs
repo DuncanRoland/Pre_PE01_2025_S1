@@ -98,5 +98,23 @@ class Program
         {
             Console.WriteLine($"- {store}");
         }
+
+        // Test GetProductsByPriceRange linq method
+        Console.WriteLine("========================================");
+        Console.WriteLine("test GetProductsByPriceRange linq method");
+        Console.WriteLine("\nEnter minimum price (default: 100): ");
+        var inputMin = Console.ReadLine();
+
+        Console.WriteLine("Enter maximum price (default: 500): ");
+        var inputMax = Console.ReadLine();
+
+        decimal minPrice = string.IsNullOrWhiteSpace(inputMin) ? 100 : decimal.Parse(inputMin);
+        decimal maxPrice = string.IsNullOrWhiteSpace(inputMax) ? 500 : decimal.Parse(inputMax);
+        var productsInRange = storeService.GetProductsByPriceRange(minPrice, maxPrice).ToList();
+        Console.WriteLine($"\nProducts with price between {minPrice} and {maxPrice}:");
+        foreach (var product in productsInRange)
+        {
+            Console.WriteLine($"- {product.ProductName}: sell={product.SellPrice}, buy={product.BuyingPrice}");
+        }
     }
 }
