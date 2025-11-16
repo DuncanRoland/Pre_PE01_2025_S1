@@ -119,7 +119,7 @@ public class StoreService : IStoreService
 
     public IEnumerable<Product> GetFiveMostExpensiveProducts(string storeName)
     {
-        return _stores. Where(store => string.Equals(store.StoreName, storeName, StringComparison.OrdinalIgnoreCase))
+        return _stores.Where(store => string.Equals(store.StoreName, storeName, StringComparison.OrdinalIgnoreCase))
             .SelectMany(store => store.Products)
             .OrderByDescending(product => product.SellPrice)
             .Take(5);
@@ -127,7 +127,7 @@ public class StoreService : IStoreService
 
     public IEnumerable<string> GetAverageProductMarginPerCountryByProductName(string productName)
     {
-        return _stores. SelectMany(store => store.Products
+        return _stores.SelectMany(store => store.Products
                 .Where(product => string.Equals(product.ProductName, productName, StringComparison.OrdinalIgnoreCase))
                 .Select(product => new
                 {
@@ -154,6 +154,9 @@ public class StoreService : IStoreService
 
     public int GetNumberOfStoresByCountry(string productName, string countryName)
     {
-        throw new NotImplementedException();
+        return _stores
+            .Count(store => string.Equals(store.StoreCountry, countryName, StringComparison.OrdinalIgnoreCase) &&
+                            store.Products.Any(product =>
+                                string.Equals(product.ProductName, productName, StringComparison.OrdinalIgnoreCase)));
     }
 }

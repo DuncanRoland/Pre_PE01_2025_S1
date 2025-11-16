@@ -272,5 +272,17 @@ class Program
                 Console.WriteLine($"- {entry}");
             }
         }
+
+        // Test GetNumberOfStoresByCountry linq method
+        Console.WriteLine("========================================");
+        Console.WriteLine("test GetNumberOfStoresByCountry linq method");
+        Console.WriteLine("\nEnter product name to search (default: Laptop): ");
+        var productInput6 = Console.ReadLine();
+        var productNameForStoreCount = string.IsNullOrWhiteSpace(productInput6) ? "Laptop" : productInput6.Trim();
+        Console.WriteLine("Enter country name to search (default: Belgium): ");
+        var countryInput = Console.ReadLine();
+        var countryNameForStoreCount = string.IsNullOrWhiteSpace(countryInput) ? "Belgium" : countryInput.Trim();
+        var storeCount = storeService.GetNumberOfStoresByCountry(productNameForStoreCount, countryNameForStoreCount);
+        Console.WriteLine($"\nNumber of stores selling `{productNameForStoreCount}` in `{countryNameForStoreCount}`: {storeCount}");
     }
 }
