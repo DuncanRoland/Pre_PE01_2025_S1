@@ -168,5 +168,24 @@ class Program
         {
             Console.WriteLine($"- {product}");
         }
+
+        // Test GetProductWithHighestMargin linq method
+        Console.WriteLine("========================================");
+        Console.WriteLine("test GetProductWithHighestMargin linq method");
+        Console.WriteLine("\nEnter store name to search (default: TechWorld): ");
+        var storeInput3 = Console.ReadLine();
+        var storeNameForMargin = string.IsNullOrWhiteSpace(storeInput3) ? "TechWorld" : storeInput3.Trim();
+        var highestMarginProduct = storeService.GetProductWithHighestMargin(storeNameForMargin);
+        if (!highestMarginProduct.Equals(null))
+        {
+            var margin = highestMarginProduct.SellPrice - highestMarginProduct.BuyingPrice;
+            Console.WriteLine($"\nProduct with highest margin in `{storeNameForMargin}`:");
+            Console.WriteLine(
+                $"- {highestMarginProduct.ProductName}: sell={highestMarginProduct.SellPrice}, buy={highestMarginProduct.BuyingPrice}, margin={margin}");
+        }
+        else
+        {
+            Console.WriteLine($"\nNo products found in `{storeNameForMargin}`.");
+        }
     }
 }

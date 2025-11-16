@@ -88,7 +88,9 @@ public class StoreService : IStoreService
 
     public Product GetProductWithHighestMargin(string storeName)
     {
-        throw new NotImplementedException();
+        return _stores.Where(store => string.Equals(store.StoreName, storeName, StringComparison.OrdinalIgnoreCase))
+            .SelectMany(store => store.Products)
+            .MaxBy(product => product.SellPrice - product.BuyingPrice) ?? throw new InvalidOperationException("No products found for store '{storeName}'");
     }
 
     public IEnumerable<Store> GetStoresByEstablishedYear(int year)
