@@ -158,5 +158,15 @@ class Program
         Console.WriteLine(hasProduct
             ? $"\nYes, `{storeNameToCheck}` sells `{productNameToCheck}`."
             : $"\n{storeNameToCheck}` does not sell `{productNameToCheck}`.");
+
+        // Test GetUniqueProducts linq method
+        Console.WriteLine("========================================");
+        Console.WriteLine("test GetUniqueProducts linq method");
+        var uniqueProducts = storeService.GetUniqueProducts().ToList();
+        Console.WriteLine("\nUnique products (from expensive to cheap):");
+        foreach (var product in uniqueProducts)
+        {
+            Console.WriteLine($"- {product}");
+        }
     }
 }

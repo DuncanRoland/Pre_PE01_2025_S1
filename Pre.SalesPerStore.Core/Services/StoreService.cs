@@ -80,7 +80,10 @@ public class StoreService : IStoreService
 
     public IEnumerable<string> GetUniqueProducts()
     {
-        throw new NotImplementedException();
+        return _stores.SelectMany(store => store.Products)
+            .Select(product => product.ProductName)
+            .Distinct()
+            .OrderByDescending(productName => productName);
     }
 
     public Product GetProductWithHighestMargin(string storeName)
