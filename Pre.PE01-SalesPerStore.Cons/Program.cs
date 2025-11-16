@@ -16,6 +16,13 @@ class Program
         }
 
         IFileService fileService = new FileService();
+        
+        var logService = new LogService();
+        if (fileService is FileService concrete)
+        {
+            concrete.PrintEventArgsOccurred += logService.Log;
+        }
+        
         var csvFiles = Directory.EnumerateFiles(assetsPath, "*.csv", SearchOption.TopDirectoryOnly).ToList();
         if (csvFiles.Count == 0)
         {

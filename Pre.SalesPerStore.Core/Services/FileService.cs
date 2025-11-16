@@ -1,12 +1,19 @@
 ﻿using System.Globalization;
 using System.Text;
 using Pre.SalesPerStore.Core.Entities;
+using Pre.SalesPerStore.Core.Events;
 using Pre.SalesPerStore.Core.Interfaces;
 
 namespace Pre.SalesPerStore.Core.Services;
 
 public class FileService : IFileService
 {
+    public event EventHandler<PrintEventArgs>? PrintEventArgsOccurred;
+
+    protected virtual void OnPrintEventArgsOccurred(PrintEventArgs e)
+        => PrintEventArgsOccurred?.Invoke(this, e);
+
+
     public List<Store> LoadStoresFromFile(string fileName)
     {
         var storesByKey = new Dictionary<string, Store?>(StringComparer.OrdinalIgnoreCase);
@@ -62,22 +69,30 @@ public class FileService : IFileService
     {
         encoding ??= Encoding.UTF8;
 
-        if (!File.Exists(filePath))
-        {
-            Console.Error.WriteLine($"[ReadFileLines] File not found: {filePath}");
-            return [];
-        }
-
         try
         {
+            var directory = Path.GetDirectoryName(filePath);
+            if (!string.IsNullOrWhiteSpace(directory) && !Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+                OnPrintEventArgsOccurred(new PrintEventArgs("CreateDirectory", "SUCCESS"));
+            }
+
+            if (!File.Exists(filePath))
+            {
+                OnPrintEventArgsOccurred(new PrintEventArgs("FileMissing", "FAILED", "File doesn't exist"));
+                return Array.Empty<string>();
+            }
+
             using var sr = new StreamReader(filePath, encoding);
             var content = sr.ReadToEnd();
+            OnPrintEventArgsOccurred(new PrintEventArgs("ReadFileSuccess", "SUCCESS"));
             return content.Split(["\r\n", "\n"], StringSplitOptions.None);
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"[ReadFileLines] Read error: {ex.Message}");
-            return [];
+            OnPrintEventArgsOccurred(new PrintEventArgs("ReadFileFailure", "FAILED", ex.Message));
+            return Array.Empty<string>();
         }
     }
 }
