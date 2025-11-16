@@ -187,5 +187,27 @@ class Program
         {
             Console.WriteLine($"\nNo products found in `{storeNameForMargin}`.");
         }
+
+        // Test GetStoresByEstablishedYear linq method
+        Console.WriteLine("========================================");
+        Console.WriteLine("test GetStoresByEstablishedYear linq method");
+        Console.WriteLine("\nEnter established year to search (default: 2013): ");
+       
+        var yearInput = Console.ReadLine();
+        int establishedYear = string.IsNullOrWhiteSpace(yearInput) ? 2013 : int.Parse(yearInput);
+        var storesByYear = storeService.GetStoresByEstablishedYear(establishedYear).ToList();
+        Console.WriteLine($"\nStores established before {establishedYear}:");
+        
+        if (storesByYear.Count == 0)
+        {
+            Console.WriteLine("  (none)");
+        }
+        else
+        {
+            foreach (var store in storesByYear)
+            {
+                Console.WriteLine($"- {store.StoreName}, {store.StoreCountry}: Established on {store.EstablishedDate:yyyy-MM-dd}");
+            }
+        }
     }
 }
