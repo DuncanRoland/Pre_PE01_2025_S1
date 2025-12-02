@@ -127,7 +127,7 @@ public class StoreService : IStoreService
 
     public IEnumerable<string> GetAverageProductMarginPerCountryByProductName(string productName)
     {
-        return _stores.SelectMany(store => store.Products
+        /*return _stores.SelectMany(store => store.Products
                 .Where(product => string.Equals(product.ProductName, productName, StringComparison.OrdinalIgnoreCase))
                 .Select(product => new
                 {
@@ -149,7 +149,39 @@ public class StoreService : IStoreService
                 };
             })
             .OrderBy(item => item.AverageMargin)
-            .Select(item => $"Country: {item.Country} - Margin: {item.AverageMargin:F2}");
+            .Select(item => $"Country: {item.Country} - Margin: {item.AverageMargin:F2}");*/
+
+        //Eenvoudiger
+        var productMarginsByCountry = _stores
+            .SelectMany(store => store.Products, (store, product) => new
+            {
+                store.StoreCountry,
+                Product = product
+            })
+            .Where(x => string.Equals(
+                x.Product.ProductName,
+                productName,
+                StringComparison.OrdinalIgnoreCase))
+            .Select(x => new
+            {
+                x.StoreCountry,
+                Margin = x.Product.SellPrice - x.Product.BuyingPrice
+            });
+
+        var averageMarginsByCountry = productMarginsByCountry
+            .GroupBy(x => x.StoreCountry)
+            .Select(group => new
+            {
+                Country = group.Key,
+                AverageMargin = group
+                    .Select(x => x.Margin)
+                    .DefaultIfEmpty(0m)
+                    .Average()
+            })
+            .OrderBy(x => x.AverageMargin);
+
+        return averageMarginsByCountry
+            .Select(x => $"Country: {x.Country} - Margin: {x.AverageMargin:F2}");
     }
 
     public int GetNumberOfStoresByCountry(string productName, string countryName)
