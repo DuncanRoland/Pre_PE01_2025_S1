@@ -16,6 +16,7 @@ public class FileService : IFileService
 
     public List<Store> LoadStoresFromFile(string fileName)
     {
+        // Laat eventuele exceptions uit ReadFile *doorbubbelen* naar de caller.
         var storesByKey = new Dictionary<string, Store?>(StringComparer.OrdinalIgnoreCase);
 
         var lines = ReadFile(fileName);
@@ -31,8 +32,12 @@ public class FileService : IFileService
             var parts = trimmed.Split(';');
             if (parts.Length < 7)
             {
-                Console.Error.WriteLine($"[LoadStoresFromFile] Malformed line {lineNumber}.");
-                continue;
+                /*Console.Error.WriteLine($"[LoadStoresFromFile] Malformed line {lineNumber}.");
+                continue;*/
+
+                // duidelijke exception met lijnnummer
+                throw new FormatException(
+                    $"Malformed line {lineNumber}: expected at least 7 columns, but found {parts.Length}.");
             }
 
             try
@@ -57,7 +62,11 @@ public class FileService : IFileService
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine($"[LoadStoresFromFile] Skipping line {lineNumber}: {ex.Message}");
+                /*Console.Error.WriteLine($"[LoadStoresFromFile] Skipping line {lineNumber}: {ex.Message}");*/
+
+                // 1 foute lijn => exception met context doorgeven
+                throw new InvalidOperationException(
+                    $"Error parsing line {lineNumber}: {ex.Message}", ex);
             }
         }
 
@@ -80,8 +89,10 @@ public class FileService : IFileService
 
             if (!File.Exists(filePath))
             {
+                var message = $"File `{filePath}` doesn't exist.";
                 OnPrintEventArgsOccurred(new PrintEventArgs("FileMissing", "FAILED", "File doesn't exist"));
-                return Array.Empty<string>();
+                //return Array.Empty<string>();
+                throw new FileNotFoundException(message, filePath);
             }
 
             using var sr = new StreamReader(filePath, encoding);
@@ -92,7 +103,8 @@ public class FileService : IFileService
         catch (Exception ex)
         {
             OnPrintEventArgsOccurred(new PrintEventArgs("ReadFileFailure", "FAILED", ex.Message));
-            return Array.Empty<string>();
+            //return Array.Empty<string>();
+            throw;
         }
     }
 }
