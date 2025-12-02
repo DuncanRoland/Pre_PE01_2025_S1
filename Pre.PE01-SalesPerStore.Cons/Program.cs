@@ -292,5 +292,5 @@ class Program
         var storeCount = storeService.GetNumberOfStoresByCountry(productNameForStoreCount, countryNameForStoreCount);
         Console.WriteLine(
             $"\nNumber of stores selling `{productNameForStoreCount}` in `{countryNameForStoreCount}`: {storeCount}");
-    }
+    } 
 }
