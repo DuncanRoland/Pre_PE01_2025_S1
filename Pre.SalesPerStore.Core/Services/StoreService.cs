@@ -48,7 +48,7 @@ public class StoreService : IStoreService
 
     public IEnumerable<(string StoreName, decimal MeanPrice)> GetAverageProductPricePerStore()
     {
-        return _stores
+        /*return _stores
             .GroupBy(store => store.StoreName)
             .Select(grouping =>
             {
@@ -58,7 +58,24 @@ public class StoreService : IStoreService
 
                 var mean = allSellPrices.DefaultIfEmpty(0m).Average();
                 return (StoreName: grouping.Key, MeanPrice: mean);
-            });
+            });*/
+        
+        // Simpler
+        
+        return _stores
+            .SelectMany(store => store.Products, (store, product) => new
+            {
+                store.StoreName,
+                product.SellPrice
+            })
+            .GroupBy(x => x.StoreName)
+            .Select(group => (
+                StoreName: group.Key,
+                MeanPrice: group
+                    .Select(x => x.SellPrice)
+                    .DefaultIfEmpty(0m)
+                    .Average()
+            ));
     }
 
     public IEnumerable<Product> GetSalesByStore(string storeName, int minNumberOfProducts)
