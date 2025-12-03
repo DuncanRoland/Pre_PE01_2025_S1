@@ -6,12 +6,17 @@ using Pre.SalesPerStore.Core.Interfaces;
 
 namespace Pre.SalesPerStore.Core.Services;
 
+public delegate void PrintEventHandler(object sender, PrintEventArgs e);
+
 public class FileService : IFileService
 {
-    public event EventHandler<PrintEventArgs>? PrintEventArgsOccurred;
+    //public event EventHandler<PrintEventArgs>? PrintEventArgsOccurred;
+    public event PrintEventHandler? PrintEventArgsOccurred;
 
-    protected virtual void OnPrintEventArgsOccurred(PrintEventArgs e)
-        => PrintEventArgsOccurred?.Invoke(this, e);
+    // The teacher doesn't want this in a separate method
+
+    /*protected virtual void OnPrintEventArgsOccurred(PrintEventArgs e)
+        => PrintEventArgsOccurred?.Invoke(this, e);*/
 
 
     public List<Store> LoadStoresFromFile(string fileName)
@@ -84,25 +89,38 @@ public class FileService : IFileService
             if (!string.IsNullOrWhiteSpace(directory) && !Directory.Exists(directory))
             {
                 Directory.CreateDirectory(directory);
-                OnPrintEventArgsOccurred(new PrintEventArgs("CreateDirectory", "SUCCESS"));
+                //OnPrintEventArgsOccurred(new PrintEventArgs("CreateDirectory", "SUCCESS"));
+                PrintEventArgsOccurred?.Invoke(this,
+                    new PrintEventArgs("CreateDirectory", "SUCCESS"));
             }
 
             if (!File.Exists(filePath))
             {
                 var message = $"File `{filePath}` doesn't exist.";
-                OnPrintEventArgsOccurred(new PrintEventArgs("FileMissing", "FAILED", "File doesn't exist"));
-                //return Array.Empty<string>();
+                PrintEventArgsOccurred?.Invoke(this,
+                    new PrintEventArgs("FileMissing", "FAILED", "File doesn't exist"));
+
                 throw new FileNotFoundException(message, filePath);
+
+                /*OnPrintEventArgsOccurred(new PrintEventArgs("FileMissing", "FAILED", "File doesn't exist"));
+                //return Array.Empty<string>();
+                throw new FileNotFoundException(message, filePath);*/
             }
 
             using var sr = new StreamReader(filePath, encoding);
             var content = sr.ReadToEnd();
-            OnPrintEventArgsOccurred(new PrintEventArgs("ReadFileSuccess", "SUCCESS"));
+            //OnPrintEventArgsOccurred(new PrintEventArgs("ReadFileSuccess", "SUCCESS"));
+            PrintEventArgsOccurred?.Invoke(this,
+                new PrintEventArgs("ReadFileSuccess", "SUCCESS"));
+
             return content.Split(["\r\n", "\n"], StringSplitOptions.None);
         }
         catch (Exception ex)
         {
-            OnPrintEventArgsOccurred(new PrintEventArgs("ReadFileFailure", "FAILED", ex.Message));
+            PrintEventArgsOccurred?.Invoke(this,
+                new PrintEventArgs("ReadFileFailure", "FAILED", ex.Message));
+
+            //OnPrintEventArgsOccurred(new PrintEventArgs("ReadFileFailure", "FAILED", ex.Message));
             //return Array.Empty<string>();
             throw;
         }
